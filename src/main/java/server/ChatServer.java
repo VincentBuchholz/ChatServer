@@ -11,7 +11,6 @@ public class ChatServer {
     //Call server with arguments like this: 8088
     public static void main(String[] args) throws UnknownHostException {
         int port = 8088;
-        
         try {
             if (args.length == 1) {
                 port = Integer.parseInt(args[0]);
