@@ -2,18 +2,21 @@ package server;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.HashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Server {
     private int port;
-    HashMap<String,User> users = new HashMap<>();
+    private HashMap<String,User> users = new HashMap<>();
 
     public Server(int port) {
         this.port = port;
     }
 
     public void startServer() throws IOException {
-        ServerSocket serverSocket = new ServerSocket();
+        ServerSocket serverSocket = new ServerSocket(port);
 
         //Create users
         User user1 = new User("Lars");
@@ -24,6 +27,16 @@ public class Server {
         users.put(user2.getName(),user2);
         users.put(user3.getName(),user3);
         users.put(user4.getName(),user4);
+
+        ExecutorService es = Executors.newFixedThreadPool(10);
+
+
+
+        while (true){
+            Socket client = serverSocket.accept();
+            ClientHandler cl = new ClientHandler(client,users);
+            es.execute(cl);
+        }
 
 
 
