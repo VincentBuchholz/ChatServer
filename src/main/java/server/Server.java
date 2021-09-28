@@ -13,7 +13,6 @@ public class Server {
     private ArrayList<User> usersOnline = new ArrayList<>();
     private BlockingQueue<String> messageQueue = new ArrayBlockingQueue(10);
     private CopyOnWriteArrayList<ClientHandler> clientHandlerList = new CopyOnWriteArrayList<>();
-
     public Server(int port) {
         this.port = port;
     }

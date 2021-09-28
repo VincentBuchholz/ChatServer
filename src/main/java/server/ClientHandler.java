@@ -62,7 +62,8 @@ public class ClientHandler implements Runnable{
                         messageQueue.put(msg);
                     }
                     else{
-                        users.get(receiver).getMessageQueue().put(msg);
+                        //users.get(receiver).getMessageQueue().put(msg);
+                        users.get(receiver).getPw().println(msg);
                     }
                     //pw.println("receiver: " + receiver);
                     //pw.println("Message: " + msg);
@@ -85,6 +86,7 @@ public class ClientHandler implements Runnable{
         if (users.containsKey(username) && !users.get(username).isOnline()){
             pw.println("connected");
             users.get(username).setIsOnline(true);
+            users.get(username).setSocket(socket);
             currentUser = users.get(username);
             usersOnline.add(currentUser);
         }

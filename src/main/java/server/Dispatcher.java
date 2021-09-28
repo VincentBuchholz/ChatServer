@@ -48,10 +48,11 @@ public class Dispatcher implements Runnable {
 
     private void msgSpecificUsers() throws InterruptedException {
         String msg = "";
-        for (ClientHandler client: clientHandlerList) {
-            msg = client.getCurrentUser().getMessageQueue().take();
-            client.getPw().println(msg);
-            }
+
+        for (User user : usersOnline) {
+            msg = user.getMessageQueue().take();
+            user.getPw().println(msg);
+        }
         }
     }
 
