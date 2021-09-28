@@ -3,6 +3,7 @@ package server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -10,6 +11,7 @@ import java.util.concurrent.Executors;
 public class Server {
     private int port;
     private HashMap<String,User> users = new HashMap<>();
+    private ArrayList<User> usersOnline = new ArrayList<>();
 
     public Server(int port) {
         this.port = port;
@@ -34,7 +36,7 @@ public class Server {
 
         while (true){
             Socket client = serverSocket.accept();
-            ClientHandler cl = new ClientHandler(client,users);
+            ClientHandler cl = new ClientHandler(client,users,usersOnline);
             es.execute(cl);
         }
 

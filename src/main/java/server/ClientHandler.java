@@ -3,6 +3,7 @@ package server;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -12,13 +13,15 @@ public class ClientHandler implements Runnable{
     private PrintWriter pw;
     private Scanner scanner;
     private User currentUser;
+    private ArrayList<User> usersOnline;
 
 
-    public ClientHandler(Socket socket, HashMap<String, User> users) throws IOException {
+    public ClientHandler(Socket socket, HashMap<String, User> users, ArrayList<User> usersOnline) throws IOException {
         this.socket = socket;
         this.users = users;
         this.pw = new PrintWriter(socket.getOutputStream(),true);
         this.scanner = new Scanner(socket.getInputStream());
+        this.usersOnline = usersOnline;
     }
 
     @Override
@@ -50,6 +53,9 @@ public class ClientHandler implements Runnable{
 
 
             switch (action){
+                case "USERSONLINE":
+                    pw.println(this.online());
+                    break;
                 case "SEND":
                     pw.println("receiver: " + receiver);
                     pw.println("Message: " + msg);
@@ -73,6 +79,7 @@ public class ClientHandler implements Runnable{
             pw.println("connected");
             users.get(username).setIsOnline(true);
             currentUser = users.get(username);
+            usersOnline.add(currentUser);
         }
         else if (users.containsKey(username) && users.get(username).isOnline()) {
             pw.println("User already online");
@@ -88,7 +95,17 @@ public class ClientHandler implements Runnable{
         pw.println("Closing..");
         currentUser.setIsOnline(false);
         socket.close();
+        usersOnline.remove(currentUser);
 
+    }
+
+    private String online(){
+        String onlineUsers = "";
+
+        for (User user: usersOnline) {
+            onlineUsers += user.getName() + "\n";
+        }
+        return  onlineUsers;
     }
 
 
