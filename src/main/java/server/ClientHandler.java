@@ -29,7 +29,6 @@ public class ClientHandler implements Runnable{
 
     @Override
     public void run() {
-
         try {
             this.protocol();
         } catch (IOException e) {
@@ -122,5 +121,9 @@ public class ClientHandler implements Runnable{
 
     public User getCurrentUser() {
         return currentUser;
+    }
+
+    public void setCurrentUser(User currentUser) {
+        this.currentUser = currentUser;
     }
 }

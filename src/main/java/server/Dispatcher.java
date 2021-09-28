@@ -9,25 +9,35 @@ public class Dispatcher implements Runnable {
     private CopyOnWriteArrayList<ClientHandler> clientHandlerList;
     private ArrayList<User> usersOnline;
     private User user;
+    private boolean msgAll;
 
-    public Dispatcher(BlockingQueue<String> messageQueue, CopyOnWriteArrayList<ClientHandler> clientHandlerList, ArrayList<User> usersOnline) {
+    public Dispatcher(BlockingQueue<String> messageQueue, CopyOnWriteArrayList<ClientHandler> clientHandlerList, ArrayList<User> usersOnline, boolean msgAll) {
         this.messageQueue = messageQueue;
         this.clientHandlerList = clientHandlerList;
         this.usersOnline = usersOnline;
+        this.msgAll = msgAll;
     }
 
     @Override
     public void run() {
-        try {
-            msgAll();
-            System.out.println("Trying to send specific user message...");
-            msgSpecificUsers();
-            System.out.println("Done");
-
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        while (true) {
+            if (msgAll) {
+                try {
+                    this.msgAll();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (!msgAll) {
+                try {
+                    this.msgSpecificUsers();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
+
 
     private void msgAll() throws InterruptedException {
         String msg = messageQueue.take();
@@ -38,13 +48,10 @@ public class Dispatcher implements Runnable {
 
     private void msgSpecificUsers() throws InterruptedException {
         String msg = "";
-        for (ClientHandler client:clientHandlerList) {
-            user = client.getCurrentUser();
+        for (ClientHandler client: clientHandlerList) {
             msg = client.getCurrentUser().getMessageQueue().take();
-            if (user.equals(client.getCurrentUser())){
-                client.getPw().println(msg);
+            client.getPw().println(msg);
             }
-            System.out.println(user.getName());
         }
     }
-}
+

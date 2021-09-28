@@ -39,9 +39,11 @@ public class Server {
             Socket client = serverSocket.accept();
             ClientHandler cl = new ClientHandler(client,users,usersOnline,messageQueue);
             clientHandlerList.add(cl);
-            Dispatcher dis = new Dispatcher(messageQueue,clientHandlerList,usersOnline);
+            Dispatcher disAll = new Dispatcher(messageQueue,clientHandlerList,usersOnline,true);
+            Dispatcher disSpecific = new Dispatcher(messageQueue,clientHandlerList,usersOnline,false);
+            es.execute(disAll);
+            es.execute(disSpecific);
             es.execute(cl);
-            es.execute(dis);
         }
 
 
