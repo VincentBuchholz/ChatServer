@@ -44,9 +44,6 @@ public class ClientHandler implements Runnable{
         this.connect();
         while(true){
             String input = scanner.nextLine();
-
-
-
             String[] split = input.split("#");
             String action = split[0];
             String receiver ="";
@@ -64,6 +61,9 @@ public class ClientHandler implements Runnable{
                 case "SEND":
                     if(receiver.equals("*")){
                         messageQueue.put(msg);
+                    }
+                    else{
+                        users.get(receiver).getMessageQueue().put(msg);
                     }
                     //pw.println("receiver: " + receiver);
                     //pw.println("Message: " + msg);
@@ -118,5 +118,9 @@ public class ClientHandler implements Runnable{
 
     public PrintWriter getPw() {
         return pw;
+    }
+
+    public User getCurrentUser() {
+        return currentUser;
     }
 }

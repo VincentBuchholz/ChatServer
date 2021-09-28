@@ -39,7 +39,7 @@ public class Server {
             Socket client = serverSocket.accept();
             ClientHandler cl = new ClientHandler(client,users,usersOnline,messageQueue);
             clientHandlerList.add(cl);
-            Dispatcher dis = new Dispatcher(messageQueue,clientHandlerList);
+            Dispatcher dis = new Dispatcher(messageQueue,clientHandlerList,usersOnline);
             es.execute(cl);
             es.execute(dis);
         }
