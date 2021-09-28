@@ -5,13 +5,14 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 public class Server {
     private int port;
     private HashMap<String,User> users = new HashMap<>();
     private ArrayList<User> usersOnline = new ArrayList<>();
+    private BlockingQueue<String> messageQueue = new ArrayBlockingQueue(10);
+    private CopyOnWriteArrayList<ClientHandler> clientHandlerList = new CopyOnWriteArrayList<>();
 
     public Server(int port) {
         this.port = port;
@@ -36,8 +37,11 @@ public class Server {
 
         while (true){
             Socket client = serverSocket.accept();
-            ClientHandler cl = new ClientHandler(client,users,usersOnline);
+            ClientHandler cl = new ClientHandler(client,users,usersOnline,messageQueue);
+            clientHandlerList.add(cl);
+            Dispatcher dis = new Dispatcher(messageQueue,clientHandlerList);
             es.execute(cl);
+            es.execute(dis);
         }
 
 

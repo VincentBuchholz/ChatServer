@@ -6,6 +6,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
+import java.util.concurrent.BlockingQueue;
 
 public class ClientHandler implements Runnable{
     private Socket socket;
@@ -14,14 +15,16 @@ public class ClientHandler implements Runnable{
     private Scanner scanner;
     private User currentUser;
     private ArrayList<User> usersOnline;
+    private BlockingQueue<String> messageQueue;
 
 
-    public ClientHandler(Socket socket, HashMap<String, User> users, ArrayList<User> usersOnline) throws IOException {
+    public ClientHandler(Socket socket, HashMap<String, User> users, ArrayList<User> usersOnline, BlockingQueue<String> messageQueue) throws IOException {
         this.socket = socket;
         this.users = users;
         this.pw = new PrintWriter(socket.getOutputStream(),true);
         this.scanner = new Scanner(socket.getInputStream());
         this.usersOnline = usersOnline;
+        this.messageQueue = messageQueue;
     }
 
     @Override
@@ -31,11 +34,13 @@ public class ClientHandler implements Runnable{
             this.protocol();
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
 
     }
 
-    public void protocol() throws IOException {
+    public void protocol() throws IOException, InterruptedException {
         this.connect();
         while(true){
             String input = scanner.nextLine();
@@ -57,8 +62,11 @@ public class ClientHandler implements Runnable{
                     pw.println(this.online());
                     break;
                 case "SEND":
-                    pw.println("receiver: " + receiver);
-                    pw.println("Message: " + msg);
+                    if(receiver.equals("*")){
+                        messageQueue.put(msg);
+                    }
+                    //pw.println("receiver: " + receiver);
+                    //pw.println("Message: " + msg);
                     break;
                 case "CLOSE":
                     this.disconnect();
@@ -103,10 +111,12 @@ public class ClientHandler implements Runnable{
         String onlineUsers = "";
 
         for (User user: usersOnline) {
-            onlineUsers += user.getName() + "\n";
+            onlineUsers += user.getName() + "\r\n";
         }
         return  onlineUsers;
     }
 
-
+    public PrintWriter getPw() {
+        return pw;
+    }
 }
