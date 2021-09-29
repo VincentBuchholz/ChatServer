@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Scanner;
 import java.util.concurrent.BlockingQueue;
 
@@ -50,7 +51,7 @@ public class ClientHandler implements Runnable {
             String msg = currentUser.getName() + ": ";
 
             if (split.length > 1) {
-                receiver = split[1];
+                receiver = split[1].toLowerCase();
                 receiverSplit = receiver.split(",");
                 msg += split[2];
             }
@@ -86,7 +87,7 @@ public class ClientHandler implements Runnable {
     private void connect() throws IOException {
         String username = "";
         pw.println("Username: ");
-        username = scanner.nextLine();
+        username = scanner.nextLine().toLowerCase();
 
         if (users.containsKey(username) && !users.get(username).isOnline()) {
             pw.println("connected");

@@ -21,10 +21,10 @@ public class Server {
         ServerSocket serverSocket = new ServerSocket(port);
 
         //Create users
-        User user1 = new User("Lars");
-        User user2 = new User("Vincent");
-        User user3 = new User("Viktor");
-        User user4 = new User("Karl");
+        User user1 = new User("lars");
+        User user2 = new User("vincent");
+        User user3 = new User("viktor");
+        User user4 = new User("karl");
         users.put(user1.getName(),user1);
         users.put(user2.getName(),user2);
         users.put(user3.getName(),user3);
