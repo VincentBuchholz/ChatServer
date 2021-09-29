@@ -47,12 +47,12 @@ public class ClientHandler implements Runnable {
             String action = split[0];
             String receiver = "";
             String[] receiverSplit = {};
-            String msg = " ";
+            String msg = currentUser.getName() + ": ";
 
             if (split.length > 1) {
                 receiver = split[1];
                 receiverSplit = receiver.split(",");
-                msg = split[2];
+                msg += split[2];
             }
 
             switch (action) {
