@@ -8,14 +8,11 @@ public class Dispatcher implements Runnable {
     private BlockingQueue<String> messageQueue;
     private CopyOnWriteArrayList<ClientHandler> clientHandlerList;
     private ArrayList<User> usersOnline;
-    private User user;
-    private boolean msgAll;
 
-    public Dispatcher(BlockingQueue<String> messageQueue, CopyOnWriteArrayList<ClientHandler> clientHandlerList, ArrayList<User> usersOnline, boolean msgAll) {
+    public Dispatcher(BlockingQueue<String> messageQueue, CopyOnWriteArrayList<ClientHandler> clientHandlerList, ArrayList<User> usersOnline) {
         this.messageQueue = messageQueue;
         this.clientHandlerList = clientHandlerList;
         this.usersOnline = usersOnline;
-        this.msgAll = msgAll;
     }
 
     @Override
@@ -33,15 +30,6 @@ public class Dispatcher implements Runnable {
         String msg = messageQueue.take();
         for (ClientHandler client : clientHandlerList) {
             client.getPw().println(msg);
-        }
-    }
-
-    private void msgSpecificUsers() throws InterruptedException {
-        String msg = "";
-
-        for (User user : usersOnline) {
-            msg = user.getMessageQueue().take();
-            user.getPw().println(msg);
         }
     }
 }

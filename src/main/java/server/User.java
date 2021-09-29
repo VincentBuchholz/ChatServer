@@ -10,16 +10,12 @@ import java.util.concurrent.BlockingQueue;
 public class User {
     private String name;
     private boolean isOnline;
-    private BlockingQueue<String> messageQueue;
     private Socket socket;
     private PrintWriter pw;
-
-
 
     public User(String name){
         this.name = name;
         isOnline = false;
-        this.messageQueue = new ArrayBlockingQueue<>(10);
     }
 
     public void setIsOnline(boolean isOnline){
@@ -34,9 +30,6 @@ public class User {
         return name;
     }
 
-    public BlockingQueue<String> getMessageQueue() {
-        return messageQueue;
-    }
     public void setSocket(Socket socket){
         this.socket = socket;
         try {

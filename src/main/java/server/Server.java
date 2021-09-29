@@ -33,14 +33,12 @@ public class Server {
 
         ExecutorService es = Executors.newFixedThreadPool(100);
 
-
-
         while (true){
             Socket client = serverSocket.accept();
             ClientHandler cl = new ClientHandler(client,users,usersOnline,messageQueue);
             clientHandlerList.add(cl);
-            Dispatcher disAll = new Dispatcher(messageQueue,clientHandlerList,usersOnline,true);
-            es.execute(disAll);
+            Dispatcher disp = new Dispatcher(messageQueue,clientHandlerList,usersOnline);
+            es.execute(disp);
             es.execute(cl);
         }
     }
