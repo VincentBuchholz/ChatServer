@@ -21,27 +21,17 @@ public class Dispatcher implements Runnable {
     @Override
     public void run() {
         while (true) {
-            if (msgAll) {
-                try {
-                    this.msgAll();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (!msgAll) {
-                try {
-                    this.msgSpecificUsers();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+            try {
+                this.msgAll();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
     }
 
-
     private void msgAll() throws InterruptedException {
         String msg = messageQueue.take();
-        for (ClientHandler client:clientHandlerList) {
+        for (ClientHandler client : clientHandlerList) {
             client.getPw().println(msg);
         }
     }
@@ -53,6 +43,6 @@ public class Dispatcher implements Runnable {
             msg = user.getMessageQueue().take();
             user.getPw().println(msg);
         }
-        }
     }
+}
 

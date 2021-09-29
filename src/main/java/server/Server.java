@@ -30,7 +30,8 @@ public class Server {
         users.put(user3.getName(),user3);
         users.put(user4.getName(),user4);
 
-        ExecutorService es = Executors.newFixedThreadPool(10);
+
+        ExecutorService es = Executors.newFixedThreadPool(100);
 
 
 
@@ -39,13 +40,8 @@ public class Server {
             ClientHandler cl = new ClientHandler(client,users,usersOnline,messageQueue);
             clientHandlerList.add(cl);
             Dispatcher disAll = new Dispatcher(messageQueue,clientHandlerList,usersOnline,true);
-            Dispatcher disSpecific = new Dispatcher(messageQueue,clientHandlerList,usersOnline,false);
             es.execute(disAll);
-            es.execute(disSpecific);
             es.execute(cl);
         }
-
-
-
     }
 }

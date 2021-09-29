@@ -8,9 +8,9 @@ import java.util.HashMap;
 import java.util.Scanner;
 import java.util.concurrent.BlockingQueue;
 
-public class ClientHandler implements Runnable{
+public class ClientHandler implements Runnable {
     private Socket socket;
-    private HashMap<String,User> users;
+    private HashMap<String, User> users;
     private PrintWriter pw;
     private Scanner scanner;
     private User currentUser;
@@ -21,7 +21,7 @@ public class ClientHandler implements Runnable{
     public ClientHandler(Socket socket, HashMap<String, User> users, ArrayList<User> usersOnline, BlockingQueue<String> messageQueue) throws IOException {
         this.socket = socket;
         this.users = users;
-        this.pw = new PrintWriter(socket.getOutputStream(),true);
+        this.pw = new PrintWriter(socket.getOutputStream(), true);
         this.scanner = new Scanner(socket.getInputStream());
         this.usersOnline = usersOnline;
         this.messageQueue = messageQueue;
@@ -41,32 +41,37 @@ public class ClientHandler implements Runnable{
 
     public void protocol() throws IOException, InterruptedException {
         this.connect();
-        while(true){
+        while (true) {
             String input = scanner.nextLine();
             String[] split = input.split("#");
             String action = split[0];
-            String receiver ="";
+            String receiver = "";
+            String[] receiverSplit = {};
             String msg = " ";
-            if(split.length > 1){
+
+            if (split.length > 1) {
                 receiver = split[1];
+                receiverSplit = receiver.split(",");
                 msg = split[2];
             }
 
-
-            switch (action){
+            switch (action) {
                 case "USERSONLINE":
                     pw.println(this.online());
                     break;
                 case "SEND":
-                    if(receiver.equals("*")){
+                    if (receiver.equals("*")) {
                         messageQueue.put(msg);
+                    } else if (receiverSplit.length == 1) {
+                        users.get(receiver).getPw().println(msg);
+                    } else if (receiverSplit.length >1) {
+                        for (int i = 0; i < receiverSplit.length; i++) {
+                            users.get(receiverSplit[i]).getPw().println(msg);
+                        }
                     }
                     else{
-                        //users.get(receiver).getMessageQueue().put(msg);
-                        users.get(receiver).getPw().println(msg);
+                        pw.println("There was an error try again.");
                     }
-                    //pw.println("receiver: " + receiver);
-                    //pw.println("Message: " + msg);
                     break;
                 case "CLOSE":
                     this.disconnect();
@@ -79,22 +84,20 @@ public class ClientHandler implements Runnable{
     }
 
     private void connect() throws IOException {
-        String username ="";
+        String username = "";
         pw.println("Username: ");
         username = scanner.nextLine();
 
-        if (users.containsKey(username) && !users.get(username).isOnline()){
+        if (users.containsKey(username) && !users.get(username).isOnline()) {
             pw.println("connected");
             users.get(username).setIsOnline(true);
             users.get(username).setSocket(socket);
             currentUser = users.get(username);
             usersOnline.add(currentUser);
-        }
-        else if (users.containsKey(username) && users.get(username).isOnline()) {
+        } else if (users.containsKey(username) && users.get(username).isOnline()) {
             pw.println("User already online");
             socket.close();
-        }
-        else{
+        } else {
             pw.println("User not found");
             socket.close();
         }
@@ -108,13 +111,13 @@ public class ClientHandler implements Runnable{
 
     }
 
-    private String online(){
+    private String online() {
         String onlineUsers = "";
 
-        for (User user: usersOnline) {
+        for (User user : usersOnline) {
             onlineUsers += user.getName() + "\r\n";
         }
-        return  onlineUsers;
+        return onlineUsers;
     }
 
     public PrintWriter getPw() {
