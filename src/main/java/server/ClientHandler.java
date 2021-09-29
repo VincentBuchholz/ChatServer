@@ -56,18 +56,32 @@ public class ClientHandler implements Runnable {
                 msg += split[2];
             }
 
+
+
             switch (action) {
                 case "USERSONLINE":
                     pw.println(this.online());
                     break;
                 case "SEND":
                     if (receiver.equals("*")) {
-                        messageQueue.put(msg);
+                        if(usersOnline.size()<2){
+                            pw.println("No users online");
+                        } else {
+                            messageQueue.put(msg);
+                        }
                     } else if (receiverSplit.length == 1) {
-                        users.get(receiver).getPw().println(msg);
+                        if(usersOnline.contains(users.get(receiver))) {
+                            users.get(receiver).getPw().println(msg);
+                        } else{
+                            pw.println("User not online");
+                        }
                     } else if (receiverSplit.length >1) {
                         for (int i = 0; i < receiverSplit.length; i++) {
-                            users.get(receiverSplit[i]).getPw().println(msg);
+                            if(users.get(receiverSplit[i]).isOnline()) {
+                                users.get(receiverSplit[i]).getPw().println(msg);
+                            } else{
+                                pw.println(users.get(receiverSplit[i]).getName() + " is not online");
+                            }
                         }
                     }
                     else{
