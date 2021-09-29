@@ -61,12 +61,15 @@ public class ClientHandler implements Runnable {
                     break;
                 case "SEND":
                     if (receiver.equals("*")) {
+                        pw.println("MESSAGE#*#"+msg);
                         messageQueue.put(msg);
                     } else if (receiverSplit.length == 1) {
                         users.get(receiver).getPw().println(msg);
+                        pw.println("MESSAGE#" + receiver +"#"+msg);
                     } else if (receiverSplit.length >1) {
                         for (int i = 0; i < receiverSplit.length; i++) {
                             users.get(receiverSplit[i]).getPw().println(msg);
+                            pw.println("MESSAGE#" + receiver +"#"+msg);
                         }
                     }
                     else{
@@ -94,17 +97,19 @@ public class ClientHandler implements Runnable {
             users.get(username).setSocket(socket);
             currentUser = users.get(username);
             usersOnline.add(currentUser);
+            pw.println("ONLINE#"+username);
         } else if (users.containsKey(username) && users.get(username).isOnline()) {
             pw.println("User already online");
             socket.close();
         } else {
-            pw.println("User not found");
+            pw.println("CLOSE#2");
             socket.close();
         }
     }
 
     private void disconnect() throws IOException {
-        pw.println("Closing..");
+        pw.println("CLOSE#0");
+
         currentUser.setIsOnline(false);
         socket.close();
         usersOnline.remove(currentUser);
