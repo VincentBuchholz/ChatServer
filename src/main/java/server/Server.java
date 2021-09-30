@@ -19,6 +19,7 @@ public class Server {
 
     public void startServer() throws IOException {
         ServerSocket serverSocket = new ServerSocket(port);
+        System.out.println("waiting for client, and listening on port: " + port);
 
         //Create users
         User user1 = new User("lars");
