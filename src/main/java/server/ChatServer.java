@@ -7,20 +7,13 @@ import java.net.ServerSocket;
 import java.net.UnknownHostException;
 
 public class ChatServer {
-
+    public static final int DEFAULT_PORT = 8088;
 
     //Call server with arguments like this: 8088
     public static void main(String[] args) throws UnknownHostException {
-        int port = 8088;
+        int port = DEFAULT_PORT;
 
-        Server server = new Server(port);
-        try {
-            server.startServer();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
-        /*
         try {
             if (args.length == 1) {
                 port = Integer.parseInt(args[0]);
@@ -32,8 +25,12 @@ public class ChatServer {
             System.out.println("Illegal inputs provided when starting the server!");
             return;
         }
+        try {
+            new Server(port).startServer();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-         */
 
     }
 
